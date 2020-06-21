@@ -11,4 +11,5 @@ public interface AuthService {
 	public String verifyUser(String token);
 	public AuthenticationResponse logIn(LoginRequest loginRequest);
 	public User getCurrentuser();
+	boolean isLoggedIn();
 }

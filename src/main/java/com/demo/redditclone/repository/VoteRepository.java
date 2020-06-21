@@ -1,5 +1,6 @@
 package com.demo.redditclone.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,4 +11,5 @@ import com.demo.redditclone.models.Vote;
 
 public interface VoteRepository extends JpaRepository<Vote, Long> {
 	Optional<Vote> findTopByPostAndUserOrderByVoteIdDesc(Post post,User user);
+	Optional<List<Vote>> findByPost(Post post); 
 }

@@ -1,5 +1,7 @@
 package com.demo.redditclone.models;
 
+import java.time.Instant;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -26,6 +28,16 @@ public class Comment {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "userId", referencedColumnName = "userId")
 	private User user;
+
+	private Instant createddate;
+
+	public Instant getCreateddate() {
+		return createddate;
+	}
+
+	public void setCreateddate(Instant createddate) {
+		this.createddate = createddate;
+	}
 
 	public Long getId() {
 		return id;

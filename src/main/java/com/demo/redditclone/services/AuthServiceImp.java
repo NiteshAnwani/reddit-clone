@@ -7,6 +7,7 @@ import java.util.UUID;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -93,9 +94,14 @@ public class AuthServiceImp implements AuthService {
 				new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 		SecurityContextHolder.getContext().setAuthentication(authenticate);
 		String authenticationToken = jwtProviderService.generateToken(authenticate);
-		System.out.println(authenticationToken);
 		return new AuthenticationResponse(authenticationToken, loginRequest.getUsername());
 	}
+	
+	@Override
+	public boolean isLoggedIn() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return !(authentication instanceof AnonymousAuthenticationToken) && authentication.isAuthenticated();
+    }
 
 	private String enableAndVerifyUser(VerificationToken verToken) {
 		String userName = verToken.getUser().getUserName();

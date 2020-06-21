@@ -33,7 +33,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity httpSecurity) throws Exception {
 		httpSecurity.csrf().disable().authorizeRequests().antMatchers("/api/auth/**").permitAll()
-				.antMatchers("/api/subreddit/**").authenticated();
+				.antMatchers("/api/subreddit/**").authenticated().antMatchers("/api/post/**").authenticated();
 		httpSecurity.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
 		httpSecurity.headers().frameOptions().sameOrigin();

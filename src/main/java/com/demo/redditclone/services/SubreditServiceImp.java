@@ -33,14 +33,12 @@ public class SubreditServiceImp implements SubredditService {
 		return maptoDto(subreddit);
 	}
 
-	@Override
-	public SubredditDto maptoDto(Subreddit subreddit) {
+	private SubredditDto maptoDto(Subreddit subreddit) {
 		return new SubredditDto(subreddit.getId(), subreddit.getName(), subreddit.getDescription(),
 				subreddit.getPosts().size());
 	}
 
-	@Override
-	public Subreddit mapToSubreddit(SubredditDto subredditDto) {
+	private Subreddit mapToSubreddit(SubredditDto subredditDto) {
 		return new Subreddit("/r/"+subredditDto.getName(),subredditDto.getDescription(),authService.getCurrentuser(),now());
 	}
 

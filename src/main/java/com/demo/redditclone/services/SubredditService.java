@@ -11,8 +11,5 @@ public interface SubredditService {
 	
 	public List<SubredditDto> getAll();
 	public SubredditDto save(SubredditDto subredditDto);
-	public SubredditDto getSubreddit(Long id);
-	public SubredditDto maptoDto(Subreddit subreddit);
-	public Subreddit mapToSubreddit(SubredditDto subredditDto);
-	
+	public SubredditDto getSubreddit(Long id);	
 }

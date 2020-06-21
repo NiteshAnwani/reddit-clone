@@ -1,10 +1,5 @@
 package com.demo.redditclone.dto;
 
-import java.util.List;
-
-import com.demo.redditclone.models.Post;
-import com.demo.redditclone.models.User;
-
 public class SubredditDto {
 
 	private Long id;
