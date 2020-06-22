@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import com.demo.redditclone.dto.AuthenticationResponse;
 import com.demo.redditclone.dto.LoginRequest;
+import com.demo.redditclone.dto.RefreshTokenRequest;
 import com.demo.redditclone.dto.RegisterRequest;
 import com.demo.redditclone.exceptions.SpringRedditException;
 import com.demo.redditclone.models.NotificationEmail;
@@ -44,6 +45,9 @@ public class AuthServiceImp implements AuthService {
 	@Autowired
 	private JWTProviderService jwtProviderService;
 
+	@Autowired
+	private RefreshTokenService refreshTokenService;
+
 	@Override
 	@Transactional
 	public void signUp(RegisterRequest registerRequest, String domain) {
@@ -68,7 +72,8 @@ public class AuthServiceImp implements AuthService {
 	public User getCurrentuser() {
 		org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder
 				.getContext().getAuthentication().getPrincipal();
-		return userRepository.findByUserName(principal.getUsername()).orElseThrow(() -> new SpringRedditException("Current User not Found "));
+		return userRepository.findByUserName(principal.getUsername())
+				.orElseThrow(() -> new SpringRedditException("Current User not Found "));
 	}
 
 	@Override
@@ -94,14 +99,25 @@ public class AuthServiceImp implements AuthService {
 				new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 		SecurityContextHolder.getContext().setAuthentication(authenticate);
 		String authenticationToken = jwtProviderService.generateToken(authenticate);
-		return new AuthenticationResponse(authenticationToken, loginRequest.getUsername());
+		return new AuthenticationResponse(authenticationToken, loginRequest.getUsername(),
+				refreshTokenService.generateToken(authenticationToken).getToken(),
+				Instant.now().plusMillis(jwtProviderService.getJwtExpirationInMillis()));
 	}
-	
+
 	@Override
 	public boolean isLoggedIn() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return !(authentication instanceof AnonymousAuthenticationToken) && authentication.isAuthenticated();
-    }
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		return !(authentication instanceof AnonymousAuthenticationToken) && authentication.isAuthenticated();
+	}
+
+	@Override
+	public AuthenticationResponse refreshToken(RefreshTokenRequest refreshTokenRequest) {
+		refreshTokenService.validateRefreshToken(refreshTokenRequest.getRefreshToken());
+		String token = jwtProviderService.generateTokenWithUserName(refreshTokenRequest.getUserName());
+		return new AuthenticationResponse(token, refreshTokenRequest.getUserName(),
+				refreshTokenRequest.getRefreshToken(),
+				Instant.now().plusMillis(jwtProviderService.getJwtExpirationInMillis()));
+	}
 
 	private String enableAndVerifyUser(VerificationToken verToken) {
 		String userName = verToken.getUser().getUserName();

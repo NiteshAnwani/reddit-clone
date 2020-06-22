@@ -8,5 +8,9 @@ public interface JWTProviderService {
 	boolean validateToken(String jwt);
 
 	String getUserNameFromJWT(String token);
+
+	Long getJwtExpirationInMillis();
+
+	String generateTokenWithUserName(String username);
 	
 }
