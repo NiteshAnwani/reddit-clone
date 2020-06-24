@@ -1,8 +1,11 @@
 package com.demo.redditclone.exceptions;
 
-public class SpringRedditException extends RuntimeException{
-	public SpringRedditException(String message) {
-		super(message);
-	}
+import net.bytebuddy.implementation.bind.annotation.Super;
 
+public class SpringRedditException extends RuntimeException {
+
+	public SpringRedditException(String exMessage) {
+		super(exMessage);
+		System.out.println("^^^^^^^^^^^" + exMessage);
+	}
 }

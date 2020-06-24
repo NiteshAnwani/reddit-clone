@@ -3,6 +3,8 @@ package com.demo.redditclone.services;
 import java.time.Instant;
 import java.util.UUID;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +12,7 @@ import com.demo.redditclone.exceptions.SpringRedditException;
 import com.demo.redditclone.models.RefreshToken;
 import com.demo.redditclone.repository.RefreshTokenRepository;
 
+@Transactional
 @Service
 public class RefreshTokenServiceImp implements RefreshTokenService {
 

@@ -1,5 +1,7 @@
 package com.demo.redditclone.controllers;
 
+import java.time.Instant;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,7 @@ import com.demo.redditclone.dto.LoginRequest;
 import com.demo.redditclone.dto.RefreshTokenRequest;
 import com.demo.redditclone.dto.RegisterRequest;
 import com.demo.redditclone.services.AuthService;
+import com.demo.redditclone.services.JWTProviderService;
 import com.demo.redditclone.services.RefreshTokenService;
 
 @RestController
@@ -32,6 +35,9 @@ public class AuthController {
 
 	@Autowired
 	RefreshTokenService refreshTokenService;
+
+	@Autowired
+	JWTProviderService jwtProvider;
 
 	@PostMapping(path = "/signup")
 	public GenericResponse signup(@RequestBody RegisterRequest registerRequest,
@@ -57,14 +63,17 @@ public class AuthController {
 	}
 
 	@PostMapping(path = "/refresh/token")
-	public ResponseEntity<String> refreshToken(@Valid @RequestBody RefreshTokenRequest refreshTokenRequest) {
-		refreshTokenService.generateToken(refreshTokenRequest.getRefreshToken());
-		return ResponseEntity.status(HttpStatus.OK)
-				.body(authServiceImp.refreshToken(refreshTokenRequest).getRefreshToken());
+	public AuthenticationResponse refreshToken(@Valid @RequestBody RefreshTokenRequest refreshTokenRequest) {
+		refreshTokenService.validateRefreshToken(refreshTokenRequest.getRefreshToken());
+		String token = jwtProvider.generateTokenWithUserName(refreshTokenRequest.getUserName());
+		AuthenticationResponse authenticateResponse = new AuthenticationResponse(token,
+				refreshTokenRequest.getUserName(), refreshTokenRequest.getRefreshToken(),
+				Instant.now().plusMillis(jwtProvider.getJwtExpirationInMillis()));
+		return authenticateResponse;
 	}
 
 	@PostMapping("/logout")
-	public ResponseEntity<String> logout(@Valid @RequestBody RefreshTokenRequest refreshTokenRequest) {
+	public ResponseEntity<String> logout(@RequestBody RefreshTokenRequest refreshTokenRequest) {
 		refreshTokenService.deleteRefreshToken(refreshTokenRequest.getRefreshToken());
 		return ResponseEntity.status(HttpStatus.OK).body("Refresh Token Deleted Successfully!!");
 	}
