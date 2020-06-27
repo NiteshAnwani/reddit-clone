@@ -2,6 +2,7 @@ package com.demo.redditclone.controllers;
 
 import java.time.Instant;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,8 +74,9 @@ public class AuthController {
 	}
 
 	@PostMapping("/logout")
-	public ResponseEntity<String> logout(@RequestBody RefreshTokenRequest refreshTokenRequest) {
+	public ResponseEntity<String> logout(@RequestBody RefreshTokenRequest refreshTokenRequest,HttpServletRequest req) {
 		refreshTokenService.deleteRefreshToken(refreshTokenRequest.getRefreshToken());
+		jwtProvider.addInBlackList(req.getHeader("Authorization").substring(7));
 		return ResponseEntity.status(HttpStatus.OK).body("Refresh Token Deleted Successfully!!");
 	}
 }

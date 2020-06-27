@@ -9,12 +9,15 @@ import java.util.Date;
 
 import javax.annotation.PostConstruct;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import com.demo.redditclone.exceptions.SpringRedditException;
+import com.demo.redditclone.repository.BlackListTokenRepository;
+import com.demo.redditclone.util.Constants;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -22,6 +25,9 @@ import static io.jsonwebtoken.Jwts.parser;
 
 @Service
 public class JWTServiceProviderImp implements JWTProviderService {
+	
+	@Autowired
+	private BlackListTokenRepository blacklistRepository;
 
 	private KeyStore keyStore;
 
@@ -84,5 +90,21 @@ public class JWTServiceProviderImp implements JWTProviderService {
 	@Override
 	public Long getJwtExpirationInMillis() {
 		return jwtExpirationInMillis;
+	}
+
+	private Instant getExpiryDateFromToken(String token) {
+		Instant expiryDate = parser().setSigningKey(getPublickey()).parseClaimsJws(token).getBody().getExpiration()
+				.toInstant();
+		return null;
+	}
+
+	@Override
+	public boolean inBlackList(String token) {
+		return blacklistRepository.inBlackList(token);
+	}
+
+	@Override
+	public void addInBlackList(String token) {
+		blacklistRepository.addInBlackListToken(token, getExpiryDateFromToken(token));		
 	}
 }

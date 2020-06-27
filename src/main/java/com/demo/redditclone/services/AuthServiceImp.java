@@ -128,4 +128,6 @@ public class AuthServiceImp implements AuthService {
 		return "Account Verified SuccessFully";
 	}
 
+
+
 }
