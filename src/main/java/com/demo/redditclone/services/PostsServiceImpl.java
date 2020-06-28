@@ -9,7 +9,9 @@ import org.springframework.stereotype.Service;
 
 import com.demo.redditclone.dto.PostRequest;
 import com.demo.redditclone.dto.PostResponse;
-import com.demo.redditclone.exceptions.SpringRedditException;
+import com.demo.redditclone.exceptions.PostNotFoundException;
+import com.demo.redditclone.exceptions.SubredditNotFoundException;
+import com.demo.redditclone.exceptions.UserNotFoundException;
 import com.demo.redditclone.models.Post;
 import com.demo.redditclone.models.Subreddit;
 import com.demo.redditclone.models.Vote;
@@ -58,27 +60,27 @@ public class PostsServiceImpl implements PostsService {
 	@Override
 	public PostResponse getPostById(Long id) {
 		Post post = postRepository.findById(id)
-				.orElseThrow(() -> new SpringRedditException("POST NOT FOUND WITH ID " + id));
+				.orElseThrow(() -> new PostNotFoundException("POST NOT FOUND WITH ID " + id));
 		return mapToDto(post);
 	}
 
 	@Override
 	public List<PostResponse> getPostBySubreddit(Long id) {
 		List<Post> post = postRepository.findAllBySubReddit(subredditRepository.findById(id)
-				.orElseThrow(() -> new SpringRedditException("POST NOT FOUND WITH SUBREDDIT ID " + id)));
+				.orElseThrow(() -> new PostNotFoundException("POST NOT FOUND WITH SUBREDDIT ID " + id)));
 		return post.stream().map(this::mapToDto).collect(toList());
 	}
 
 	@Override
 	public List<PostResponse> getPostByUser(String username) {
 		List<Post> post = postRepository.findByUser(userRepository.findByUserName(username)
-				.orElseThrow(() -> new SpringRedditException("User not found with the name " + username)));
+				.orElseThrow(() -> new UserNotFoundException("User not found with the name " + username)));
 		return post.stream().map(this::mapToDto).collect(toList());
 	}
 
 	private Post mapToPost(PostRequest postReq) {
 		Subreddit subreddit = subredditRepository.findByName(postReq.getSubredditName()).orElseThrow(
-				() -> new SpringRedditException("Subreddit Not Found with Name " + postReq.getSubredditName()));
+				() -> new SubredditNotFoundException("Subreddit Not Found with Name " + postReq.getSubredditName()));
 		Post post = new Post();
 		post.setPostName(postReq.getPostName());
 		post.setPostDescription(postReq.getDescription());

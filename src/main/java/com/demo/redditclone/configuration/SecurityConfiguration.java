@@ -33,12 +33,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity httpSecurity) throws Exception {
-		httpSecurity.csrf().disable().authorizeRequests().antMatchers("/api/auth/**").permitAll()
+		httpSecurity.csrf().disable().authorizeRequests().antMatchers("/api/auth/login").permitAll()
+				.antMatchers("/api/auth/accountVerification/**").permitAll().antMatchers("/api/auth/signup").permitAll()
 				.antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources/**", "/configuration/security",
 						"/swagger-ui.html", "/webjars/**")
 				.permitAll().antMatchers("/api/subreddit/**").authenticated().antMatchers("/api/post/**")
-				.authenticated().antMatchers("/api/comment/**").authenticated().antMatchers("/api/vote")
-				.authenticated();
+				.authenticated().antMatchers("/api/comment/**").authenticated().antMatchers("/api/vote").authenticated()
+				.antMatchers("/api/auth/logout").authenticated().antMatchers("/api/auth/refresh/token").authenticated();
 		httpSecurity.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		httpSecurity.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

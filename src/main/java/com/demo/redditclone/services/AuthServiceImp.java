@@ -20,6 +20,8 @@ import com.demo.redditclone.dto.LoginRequest;
 import com.demo.redditclone.dto.RefreshTokenRequest;
 import com.demo.redditclone.dto.RegisterRequest;
 import com.demo.redditclone.exceptions.SpringRedditException;
+import com.demo.redditclone.exceptions.UserNotFoundException;
+import com.demo.redditclone.exceptions.VerificationTokenNotFound;
 import com.demo.redditclone.models.NotificationEmail;
 import com.demo.redditclone.models.User;
 import com.demo.redditclone.models.VerificationToken;
@@ -73,7 +75,7 @@ public class AuthServiceImp implements AuthService {
 		org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder
 				.getContext().getAuthentication().getPrincipal();
 		return userRepository.findByUserName(principal.getUsername())
-				.orElseThrow(() -> new SpringRedditException("Current User not Found "));
+				.orElseThrow(() -> new UserNotFoundException("No User Found In Current Session"));
 	}
 
 	@Override
@@ -89,7 +91,7 @@ public class AuthServiceImp implements AuthService {
 	@Override
 	public String verifyUser(String token) {
 		Optional<VerificationToken> verTokenOptional = verificationTokenRepository.findByToken(token);
-		verTokenOptional.orElseThrow(() -> new SpringRedditException("Token Not Founf"));
+		verTokenOptional.orElseThrow(() -> new VerificationTokenNotFound("Token Not Found"));
 		return enableAndVerifyUser(verTokenOptional.get());
 	}
 
@@ -122,7 +124,7 @@ public class AuthServiceImp implements AuthService {
 	private String enableAndVerifyUser(VerificationToken verToken) {
 		String userName = verToken.getUser().getUserName();
 		User user = userRepository.findByUserName(userName)
-				.orElseThrow(() -> new SpringRedditException("User Not found for the given token"));
+				.orElseThrow(() -> new UserNotFoundException("User Not Found for the Token Shared"));
 		user.setActive(true);
 		userRepository.save(user);
 		return "Account Verified SuccessFully";

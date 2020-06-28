@@ -8,6 +8,7 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.demo.redditclone.exceptions.RefreshTokenNotFoundException;
 import com.demo.redditclone.exceptions.SpringRedditException;
 import com.demo.redditclone.models.RefreshToken;
 import com.demo.redditclone.repository.RefreshTokenRepository;
@@ -29,7 +30,9 @@ public class RefreshTokenServiceImp implements RefreshTokenService {
 
 	@Override
 	public void validateRefreshToken(String token) {
-		refreshTokenRepository.findByToken(token).orElseThrow(() -> new SpringRedditException("Invalid refresh Token"));
+		refreshTokenRepository.findByToken(token)
+				.orElseThrow(() -> new RefreshTokenNotFoundException("Invalid refresh Token"));
+		refreshTokenRepository.deleteByToken(token);
 	}
 
 	@Override

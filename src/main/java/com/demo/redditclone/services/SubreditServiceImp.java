@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.demo.redditclone.dto.SubredditDto;
-import com.demo.redditclone.exceptions.SpringRedditException;
+import com.demo.redditclone.exceptions.SubredditNotFoundException;
 import com.demo.redditclone.models.Subreddit;
 import com.demo.redditclone.repository.SubredditRepository;
 
@@ -29,7 +29,7 @@ public class SubreditServiceImp implements SubredditService {
 
 	@Override
 	public SubredditDto getSubreddit(Long id) {
-		Subreddit subreddit = subredditRepository.findById(id).orElseThrow(() -> new SpringRedditException("Subreddit not found"));
+		Subreddit subreddit = subredditRepository.findById(id).orElseThrow(() -> new SubredditNotFoundException("Subreddit not found with id "+id));
 		return maptoDto(subreddit);
 	}
 

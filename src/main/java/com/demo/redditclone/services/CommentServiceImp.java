@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.demo.redditclone.dto.CommentDto;
+import com.demo.redditclone.exceptions.PostNotFoundException;
 import com.demo.redditclone.exceptions.SpringRedditException;
+import com.demo.redditclone.exceptions.UserNotFoundException;
 import com.demo.redditclone.models.Comment;
 import com.demo.redditclone.repository.CommentRepository;
 import com.demo.redditclone.repository.PostRepository;
@@ -36,14 +38,14 @@ public class CommentServiceImp implements CommentService {
 	@Override
 	public List<CommentDto> getCommentByPost(Long id) {
 		List<Comment> comment = commentRepository.findByPost(postRepository.findById(id)
-				.orElseThrow(() -> new SpringRedditException("Post not found with the id " + id)));
+				.orElseThrow(() -> new PostNotFoundException("Post not found with the id " + id)));
 		return comment.stream().map(this::maptoDto).collect(toList());
 	}
 
 	@Override
 	public List<CommentDto> getCommentByUser(String username) {
 		List<Comment> comment = commentRepository.findByUser(userRepository.findByUserName(username)
-				.orElseThrow(() -> new SpringRedditException("User not found with the user name as " + username)));
+				.orElseThrow(() -> new UserNotFoundException("User not found with the user name as " + username)));
 		return comment.stream().map(this::maptoDto).collect(toList());
 	}
 
@@ -51,9 +53,9 @@ public class CommentServiceImp implements CommentService {
 		Comment comment = new Comment();
 		comment.setText(commentDto.getText());
 		comment.setPost(postRepository.findById(commentDto.getPostId()).orElseThrow(
-				() -> new SpringRedditException("Failed to find the post by id as id - " + commentDto.getId())));
+				() -> new PostNotFoundException("Failed to find the post by id as id - " + commentDto.getId())));
 		comment.setUser(
-				userRepository.findByUserName(commentDto.getUserName()).orElseThrow(() -> new SpringRedditException(
+				userRepository.findByUserName(commentDto.getUserName()).orElseThrow(() -> new UserNotFoundException(
 						"failed to find the user with username as " + commentDto.getUserName())));
 		comment.setCreateddate(Instant.now());
 		return comment;

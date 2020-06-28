@@ -64,7 +64,9 @@ public class AuthController {
 	}
 
 	@PostMapping(path = "/refresh/token")
-	public AuthenticationResponse refreshToken(@Valid @RequestBody RefreshTokenRequest refreshTokenRequest) {
+	public AuthenticationResponse refreshToken(@Valid @RequestBody RefreshTokenRequest refreshTokenRequest,
+			HttpServletRequest req) {
+		jwtProvider.addInBlackList(req.getHeader("Authorization").substring(7));
 		refreshTokenService.validateRefreshToken(refreshTokenRequest.getRefreshToken());
 		String token = jwtProvider.generateTokenWithUserName(refreshTokenRequest.getUserName());
 		AuthenticationResponse authenticateResponse = new AuthenticationResponse(token,
@@ -74,9 +76,9 @@ public class AuthController {
 	}
 
 	@PostMapping("/logout")
-	public ResponseEntity<String> logout(@RequestBody RefreshTokenRequest refreshTokenRequest,HttpServletRequest req) {
+	public ResponseEntity<String> logout(@RequestBody RefreshTokenRequest refreshTokenRequest, HttpServletRequest req) {
 		refreshTokenService.deleteRefreshToken(refreshTokenRequest.getRefreshToken());
 		jwtProvider.addInBlackList(req.getHeader("Authorization").substring(7));
-		return ResponseEntity.status(HttpStatus.OK).body("Refresh Token Deleted Successfully!!");
+		return ResponseEntity.status(HttpStatus.OK).body("Token Deleted Successfully!!");
 	}
 }

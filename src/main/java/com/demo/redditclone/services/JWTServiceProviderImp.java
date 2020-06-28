@@ -25,7 +25,7 @@ import static io.jsonwebtoken.Jwts.parser;
 
 @Service
 public class JWTServiceProviderImp implements JWTProviderService {
-	
+
 	@Autowired
 	private BlackListTokenRepository blacklistRepository;
 
@@ -95,7 +95,7 @@ public class JWTServiceProviderImp implements JWTProviderService {
 	private Instant getExpiryDateFromToken(String token) {
 		Instant expiryDate = parser().setSigningKey(getPublickey()).parseClaimsJws(token).getBody().getExpiration()
 				.toInstant();
-		return null;
+		return expiryDate;
 	}
 
 	@Override
@@ -105,6 +105,6 @@ public class JWTServiceProviderImp implements JWTProviderService {
 
 	@Override
 	public void addInBlackList(String token) {
-		blacklistRepository.addInBlackListToken(token, getExpiryDateFromToken(token));		
+		blacklistRepository.addInBlackListToken(token, getExpiryDateFromToken(token));
 	}
 }
