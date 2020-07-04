@@ -10,7 +10,7 @@ import com.demo.redditclone.repository.BlackListTokenRepository;
 /**
  * @author nitesh.anwani
  * 
- *         Scheduled Job at every 5 minutes to remove the expired token from In
+ *         Scheduled Job at every 10 minutes to remove the expired token from In
  *         Memory Lists.
  */
 @Component
@@ -19,7 +19,7 @@ public class Scheduler {
 	@Autowired
 	BlackListTokenRepository blackListTokenRepository;
 
-	@Scheduled(cron = "0 * * ? * *")
+	@Scheduled(cron = "0 */10 * ? * *")
 	public void cronJob() {
 		blackListTokenRepository.deleteBlackistExpiredToken();
 	}
