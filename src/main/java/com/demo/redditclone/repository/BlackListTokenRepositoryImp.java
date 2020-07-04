@@ -31,4 +31,10 @@ public class BlackListTokenRepositoryImp implements BlackListTokenRepository {
 			return false;
 	}
 
+	@Override
+	public void deleteBlackistExpiredToken() {
+		blackList.removeIf(blacklist -> (blacklist.getDate()).isBefore(Instant.now()));
+		System.out.println("SIZE " + blackList.size());
+	}
+
 }
