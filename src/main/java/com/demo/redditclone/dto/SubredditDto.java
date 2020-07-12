@@ -17,6 +17,11 @@ public class SubredditDto {
 		this.postCount = postCnt;
 	}
 
+	public SubredditDto() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
 	public Long getId() {
 		return id;
 	}
