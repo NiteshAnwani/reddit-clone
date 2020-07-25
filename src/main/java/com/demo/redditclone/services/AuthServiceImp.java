@@ -113,11 +113,12 @@ public class AuthServiceImp implements AuthService {
 	}
 
 	@Override
-	public AuthenticationResponse refreshToken(RefreshTokenRequest refreshTokenRequest) {
+	public AuthenticationResponse refreshToken(RefreshTokenRequest refreshTokenRequest, String tokenToBlackList) {
+		jwtProviderService.addInBlackList(tokenToBlackList);
 		refreshTokenService.validateRefreshToken(refreshTokenRequest.getRefreshToken());
 		String token = jwtProviderService.generateTokenWithUserName(refreshTokenRequest.getUserName());
 		return new AuthenticationResponse(token, refreshTokenRequest.getUserName(),
-				refreshTokenRequest.getRefreshToken(),
+				refreshTokenService.generateToken(token).getToken(),
 				Instant.now().plusMillis(jwtProviderService.getJwtExpirationInMillis()));
 	}
 
@@ -129,7 +130,5 @@ public class AuthServiceImp implements AuthService {
 		userRepository.save(user);
 		return "Account Verified SuccessFully";
 	}
-
-
 
 }

@@ -66,13 +66,18 @@ public class AuthController {
 	@PostMapping(path = "/refresh/token")
 	public AuthenticationResponse refreshToken(@Valid @RequestBody RefreshTokenRequest refreshTokenRequest,
 			HttpServletRequest req) {
-		jwtProvider.addInBlackList(req.getHeader("Authorization").substring(7));
-		refreshTokenService.validateRefreshToken(refreshTokenRequest.getRefreshToken());
-		String token = jwtProvider.generateTokenWithUserName(refreshTokenRequest.getUserName());
-		AuthenticationResponse authenticateResponse = new AuthenticationResponse(token,
-				refreshTokenRequest.getUserName(), refreshTokenRequest.getRefreshToken(),
-				Instant.now().plusMillis(jwtProvider.getJwtExpirationInMillis()));
-		return authenticateResponse;
+		/*
+		 * jwtProvider.addInBlackList(req.getHeader("Authorization").substring(7));
+		 * refreshTokenService.validateRefreshToken(refreshTokenRequest.getRefreshToken(
+		 * )); String token =
+		 * jwtProvider.generateTokenWithUserName(refreshTokenRequest.getUserName());
+		 * AuthenticationResponse authenticateResponse = new
+		 * AuthenticationResponse(token, refreshTokenRequest.getUserName(),
+		 * refreshTokenRequest.getRefreshToken(),
+		 * Instant.now().plusMillis(jwtProvider.getJwtExpirationInMillis())); return
+		 * authenticateResponse;
+		 */
+		return authServiceImp.refreshToken(refreshTokenRequest, req.getHeader("Authorization").substring(7));
 	}
 
 	@PostMapping("/logout")

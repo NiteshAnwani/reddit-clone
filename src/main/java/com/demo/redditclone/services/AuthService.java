@@ -13,5 +13,5 @@ public interface AuthService {
 	public AuthenticationResponse logIn(LoginRequest loginRequest);
 	public User getCurrentuser();
 	boolean isLoggedIn();
-	AuthenticationResponse refreshToken(RefreshTokenRequest refreshTokenRequest);
+	AuthenticationResponse refreshToken(RefreshTokenRequest refreshTokenRequest, String tokenToAddInBlackList);
 }
