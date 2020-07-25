@@ -29,6 +29,9 @@ public class CommentServiceImp implements CommentService {
 
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private AuthService authService;
 
 	@Override
 	public void createComment(CommentDto commentDto) {
@@ -54,9 +57,13 @@ public class CommentServiceImp implements CommentService {
 		comment.setText(commentDto.getText());
 		comment.setPost(postRepository.findById(commentDto.getPostId()).orElseThrow(
 				() -> new PostNotFoundException("Failed to find the post by id as id - " + commentDto.getId())));
-		comment.setUser(
-				userRepository.findByUserName(commentDto.getUserName()).orElseThrow(() -> new UserNotFoundException(
-						"failed to find the user with username as " + commentDto.getUserName())));
+		/*
+		 * comment.setUser(
+		 * userRepository.findByUserName(commentDto.getUserName()).orElseThrow(() -> new
+		 * UserNotFoundException( "failed to find the user with username as " +
+		 * commentDto.getUserName())));
+		 */
+		comment.setUser(this.authService.getCurrentuser());
 		comment.setCreateddate(Instant.now());
 		return comment;
 	}
