@@ -2,6 +2,7 @@ package com.demo.redditclone.configuration;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -37,9 +38,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.antMatchers("/api/auth/accountVerification/**").permitAll().antMatchers("/api/auth/signup").permitAll()
 				.antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources/**", "/configuration/security",
 						"/swagger-ui.html", "/webjars/**")
-				.permitAll().antMatchers("/api/subreddit/**").authenticated().antMatchers("/api/post/**")
-				.authenticated().antMatchers("/api/comment/**").authenticated().antMatchers("/api/vote").authenticated()
-				.antMatchers("/api/auth/logout").authenticated().antMatchers("/api/auth/refresh/token").authenticated();
+				.permitAll().antMatchers(HttpMethod.GET, "/api/subreddit/**").permitAll()
+				.antMatchers(HttpMethod.GET, "/api/post/**").permitAll().antMatchers("/api/subreddit/**")
+				.authenticated().antMatchers("/api/post/**").authenticated().antMatchers("/api/comment/**")
+				.authenticated().antMatchers("/api/vote").authenticated().antMatchers("/api/auth/logout")
+				.authenticated().antMatchers("/api/auth/refresh/token").authenticated();
 		httpSecurity.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		httpSecurity.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

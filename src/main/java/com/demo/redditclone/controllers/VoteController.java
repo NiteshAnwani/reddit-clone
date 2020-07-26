@@ -1,6 +1,7 @@
 package com.demo.redditclone.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,7 +16,7 @@ public class VoteController {
 	@Autowired
 	private VoteService voteService;
 
-	@RequestMapping(path = "/dovote")
+	@PostMapping(path = "/dovote")
 	public void doVote(@RequestBody VoteDto votedto) {
 		voteService.vote(votedto);
 
